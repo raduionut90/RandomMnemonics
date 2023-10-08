@@ -1,0 +1,24 @@
+<configuration>
+    <appender name="console" class="ch.qos.logback.core.ConsoleAppender">
+        <encoder>
+            <pattern>%d{HH:mm:ss.SSS} [%thread] %-5level %logger{36} - %M - %msg%n</pattern>
+        </encoder>
+    </appender>
+
+    <appender name="warnFile" class="ch.qos.logback.core.FileAppender">
+        <file>valid_mnemonics.log</file>
+        <encoder>
+            <pattern>%d{HH:mm:ss.SSS} [%thread] %-5level %logger{36} - %M - %msg%n</pattern>
+        </encoder>
+        <filter class="org.example.MnemonicLogLevel"/>
+    </appender>
+
+    <logger name="org.web3j.protocol.http.HttpService" level="INFO" additivity="false">
+        <appender-ref ref="console"/>
+    </logger>
+
+    <root level="DEBUG">
+        <appender-ref ref="console"/>
+        <appender-ref ref="warnFile"/>
+    </root>
+</configuration>
