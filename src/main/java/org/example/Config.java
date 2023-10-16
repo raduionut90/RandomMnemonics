@@ -21,11 +21,13 @@ public class Config {
 
     private Config(){
         try (InputStream inputStream = CheckMnemonic.class.getResourceAsStream("/app.properties")) {
-            try (BufferedReader reader = new BufferedReader(new InputStreamReader(inputStream))) {
-                appProps.load(reader);
-                inputFilesPath = appProps.getProperty("input_files");
-                lastProcessedFileName = appProps.getProperty("last_processed_file");
-                threadNumber = Integer.parseInt(appProps.getProperty("thread_number"));
+            if (inputStream != null) {
+                try (BufferedReader reader = new BufferedReader(new InputStreamReader(inputStream))) {
+                    appProps.load(reader);
+                    inputFilesPath = appProps.getProperty("input_files");
+                    lastProcessedFileName = appProps.getProperty("last_processed_file");
+                    threadNumber = Integer.parseInt(appProps.getProperty("thread_number"));
+                }
             }
         } catch (IOException e) {
             logger.error("Exception {}", e.getMessage());

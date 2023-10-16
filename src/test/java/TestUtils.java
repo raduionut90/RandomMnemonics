@@ -7,7 +7,6 @@ import org.junit.rules.TemporaryFolder;
 import org.web3j.protocol.Web3j;
 import org.web3j.protocol.http.HttpService;
 
-import java.io.FileInputStream;
 import java.io.IOException;
 import java.math.BigDecimal;
 import java.nio.file.Files;
@@ -15,7 +14,6 @@ import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Properties;
 
 import static org.example.FileProcessorCounter.updateFilesByLastProcessedFile;
 import static org.example.FileProcessorCounter.writeLastProcessedFile;
@@ -93,7 +91,7 @@ public class TestUtils {
     }
 
     @Test
-    public void testPropertiesTxtFiles() throws IOException {
+    public void testPropertiesTxtFiles() {
         Config configInstance = Config.getInstance();
         String inputFiles = configInstance.getInputFilesPath();
         String last_processed_file = configInstance.getLastProcessedFileName();

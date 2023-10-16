@@ -41,11 +41,6 @@
             <artifactId>logback-classic</artifactId>
             <version>1.4.7</version> <!-- sau versiunea cea mai recentă -->
         </dependency>
-        <dependency>
-            <groupId>com.fasterxml.jackson.core</groupId>
-            <artifactId>jackson-databind</artifactId>
-            <version>2.13.0</version> <!-- Versiunea poate varia -->
-        </dependency>
     </dependencies>
 
     <build>
