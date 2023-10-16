@@ -93,12 +93,7 @@ public class TestUtils {
     @Test
     public void testPropertiesTxtFiles() {
         Config configInstance = Config.getInstance();
-        String inputFiles = configInstance.getInputFilesPath();
-        String last_processed_file = configInstance.getLastProcessedFileName();
         int threadNumber = configInstance.getThreadNumber();
-        assertNotNull(inputFiles);
-        assertNotNull(last_processed_file);
-        assertTrue(last_processed_file.endsWith(".txt"));
         assertNotEquals(0, threadNumber);
     }
 }

@@ -16,16 +16,12 @@ public class Config {
     private static final Config INSTANCE = new Config();
 
     private int threadNumber;
-    private String inputFilesPath;
-    private String lastProcessedFileName;
 
     private Config(){
         try (InputStream inputStream = CheckMnemonic.class.getResourceAsStream("/app.properties")) {
             if (inputStream != null) {
                 try (BufferedReader reader = new BufferedReader(new InputStreamReader(inputStream))) {
                     appProps.load(reader);
-                    inputFilesPath = appProps.getProperty("input_files");
-                    lastProcessedFileName = appProps.getProperty("last_processed_file");
                     threadNumber = Integer.parseInt(appProps.getProperty("thread_number"));
                 }
             }
@@ -40,13 +36,5 @@ public class Config {
 
     public int getThreadNumber() {
         return threadNumber;
-    }
-
-    public String getInputFilesPath() {
-        return inputFilesPath;
-    }
-
-    public String getLastProcessedFileName() {
-        return lastProcessedFileName;
     }
 }
