@@ -1,6 +1,5 @@
 package org.example;
 
-import org.jetbrains.annotations.NotNull;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.web3j.protocol.Web3j;
@@ -10,14 +9,8 @@ import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
-import java.math.BigDecimal;
-import java.nio.file.Files;
-import java.nio.file.Path;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.concurrent.Callable;
-
-import static org.example.FileProcessorCounter.writeLastProcessedFile;
 
 
 public class CheckMnemonic {
@@ -30,12 +23,19 @@ public class CheckMnemonic {
         logger.warn("start");
 
         List<String> vocabulary = loadVocabulary();
-        System.out.println(vocabulary.size());
 
+
+        List<Thread> threads = new ArrayList<>();
         for (int i = 0; i < CONFIG.getThreadNumber(); i++) {
             Thread thread = new Thread(new CustomThread(vocabulary, web3));
             thread.start();
+            threads.add(thread);
         }
+        Runtime.getRuntime().addShutdownHook(new Thread(() -> {
+            for (Thread t:threads) {
+                t.interrupt();
+            }
+        }));
     }
 
     private static List<String> loadVocabulary(){

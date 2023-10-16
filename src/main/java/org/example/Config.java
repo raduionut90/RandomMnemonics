@@ -16,6 +16,7 @@ public class Config {
     private static final Config INSTANCE = new Config();
 
     private int threadNumber;
+    private int rateMinutes;
 
     private Config(){
         try (InputStream inputStream = CheckMnemonic.class.getResourceAsStream("/app.properties")) {
@@ -23,6 +24,7 @@ public class Config {
                 try (BufferedReader reader = new BufferedReader(new InputStreamReader(inputStream))) {
                     appProps.load(reader);
                     threadNumber = Integer.parseInt(appProps.getProperty("thread_number"));
+                    rateMinutes = Integer.parseInt(appProps.getProperty("rate_minutes"));
                 }
             }
         } catch (IOException e) {
@@ -37,4 +39,5 @@ public class Config {
     public int getThreadNumber() {
         return threadNumber;
     }
+    public int getRateMinutes() { return rateMinutes; }
 }

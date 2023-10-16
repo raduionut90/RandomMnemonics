@@ -94,6 +94,8 @@ public class TestUtils {
     public void testPropertiesTxtFiles() {
         Config configInstance = Config.getInstance();
         int threadNumber = configInstance.getThreadNumber();
+        int rateMinutes = configInstance.getRateMinutes();
         assertNotEquals(0, threadNumber);
+        assertNotEquals(0, rateMinutes);
     }
 }

@@ -13,8 +13,9 @@ public class CustomThread implements Runnable {
     private static final Logger logger = LoggerFactory.getLogger(CustomThread.class);
 
     private final Random random = new Random();
-    private final int MNEMONIC_SIZE = 12;
+    private static final int MNEMONIC_SIZE = 12;
     private static final int VOCABULARY_LIMIT = 2048;
+    private static final Config CONFIG = Config.getInstance();
 
     private final List<String> vocabulary;
     private final Web3j web3;
@@ -50,11 +51,11 @@ public class CustomThread implements Runnable {
 
             long endTime = System.currentTimeMillis();
             long duration = endTime - startTime;
-            int timeLimit = 1000 * 60 * 10; // 1 sec * 60 sec * 10min
+            int timeLimit = 1000 * 60 * CONFIG.getRateMinutes(); // 1 sec * 60 sec * 10min
 
             if (duration >= timeLimit) {
                 long rate = count/(duration / 1000);
-                logger.info("rate-per-thread: {} all-threads: {}", rate, rate * Config.getInstance().getThreadNumber());
+                logger.info("rate-per-thread: {} all-threads: {}", rate, (rate * CONFIG.getThreadNumber()));
                 startTime = endTime;
                 count = 0;
             }
@@ -77,4 +78,5 @@ public class CustomThread implements Runnable {
             }
         }
     }
+
 }
