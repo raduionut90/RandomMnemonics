@@ -49,6 +49,7 @@ public class FileProcessorCounter {
         if (lastIndex == -1) {
             logger.info("Nu s-a găsit fișierul corespunzător ultimului fișier procesat. Începeți de la început.");
         } else {
+            logger.info("Starting with file {}", lastIndex);
             lastIndex++; // Începeți de la următorul fișier după ultimul procesat cu succes
             files = files.subList(lastIndex, files.size());
         }

@@ -1,3 +1,4 @@
+import org.example.Config;
 import org.example.Utils;
 import org.junit.Assert;
 import org.junit.ClassRule;
@@ -18,7 +19,7 @@ import java.util.Properties;
 
 import static org.example.FileProcessorCounter.updateFilesByLastProcessedFile;
 import static org.example.FileProcessorCounter.writeLastProcessedFile;
-import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.*;
 
 public class TestUtils {
 
@@ -93,12 +94,13 @@ public class TestUtils {
 
     @Test
     public void testPropertiesTxtFiles() throws IOException {
-        String rootPath = getClass().getClassLoader().getResource("app.properties").getPath();
-        Properties appProps = new Properties();
-        appProps.load(new FileInputStream(rootPath));
-        String txtFiles = appProps.getProperty("txt_files_path");
-        String last_processed_file = appProps.getProperty("last_processed_file");
-        assertEquals("/Volumes/SandiskSSD/mnemonics_v1", txtFiles);
-        assertEquals("last_processed_file.txt", last_processed_file);
+        Config configInstance = Config.getInstance();
+        String inputFiles = configInstance.getInputFilesPath();
+        String last_processed_file = configInstance.getLastProcessedFileName();
+        int threadNumber = configInstance.getThreadNumber();
+        assertNotNull(inputFiles);
+        assertNotNull(last_processed_file);
+        assertTrue(last_processed_file.endsWith(".txt"));
+        assertNotEquals(0, threadNumber);
     }
 }
