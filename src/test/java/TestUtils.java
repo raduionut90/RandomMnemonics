@@ -11,6 +11,7 @@ public class TestUtils {
     @Test
     public void testGetAddressFromMnemonic() {
         String mnemonic1 = "person wagon kingdom sleep mixed glare shy illness mango clarify speed cruel";
+//        String mnemonic1 = "person wagon kingdom sleep mixed glare shy illness mango clarify speed";
         String expectedAddress1 = "0x63F65a55149Cef6B6017520ad74e8cf7702FaF9a";
         String mnemonic2 = "ability people rare sleep harvest jazz cruel pencil glare play flavor supply";
         String expectedAddress2 = "0xfA7ab92859D0f7B35602409c41cecA98C2B59621";

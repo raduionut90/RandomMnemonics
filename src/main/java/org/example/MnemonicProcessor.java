@@ -2,9 +2,7 @@ package org.example;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.web3j.crypto.Bip32ECKeyPair;
-import org.web3j.crypto.Keys;
-import org.web3j.crypto.MnemonicUtils;
+import org.web3j.crypto.*;
 import org.web3j.protocol.Web3j;
 import org.web3j.protocol.core.DefaultBlockParameterName;
 import org.web3j.protocol.http.HttpService;
@@ -40,7 +38,6 @@ public class MnemonicProcessor {
         String address = Numeric.prependHexPrefix(Keys.getAddress(bip44Keypair));
         return address;
     }
-
     public static String getBalance(String address) {
         String result = "";
         try {

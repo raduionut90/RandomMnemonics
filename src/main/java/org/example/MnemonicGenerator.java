@@ -14,7 +14,7 @@ public class MnemonicGenerator {
         while (mnemonic.size() < MNEMONIC_SIZE) {
             int randomInt = RANDOM.nextInt(vocabulary.size());
             String randomWord = vocabulary.get(randomInt);
-            if (mnemonic.indexOf(randomWord) < 0) {
+            if (!mnemonic.contains(randomWord)) {
                 mnemonic.add(randomWord);
             }
         }
