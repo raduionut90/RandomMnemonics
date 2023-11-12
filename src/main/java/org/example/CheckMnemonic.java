@@ -1,57 +1,62 @@
 package org.example;
 
+import org.example.worker.MonitorThread;
+import org.example.worker.RejectedExecutionHandlerImpl;
+import org.example.worker.WorkerThread;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.web3j.protocol.Web3j;
-import org.web3j.protocol.http.HttpService;
 
-import java.io.BufferedReader;
-import java.io.IOException;
-import java.io.InputStream;
-import java.io.InputStreamReader;
-import java.util.ArrayList;
 import java.util.List;
+import java.util.concurrent.*;
 
 
 public class CheckMnemonic {
-    private static final Logger logger = LoggerFactory.getLogger(CheckMnemonic.class);
-    private static final Config CONFIG = Config.getInstance();
-    private static final int VOCABULARY_LIMIT = 2048;
-    private static final Web3j web3 = Web3j.build(new HttpService());
+    private static final Logger LOGGER = LoggerFactory.getLogger(CheckMnemonic.class);
+    private static final AppConfig APP_CONFIG = AppConfig.getInstance();
+    private static final int QUEUE_CAPACITY = 1000000; // Alegeți o capacitate adecvată
 
-    public static void main(String[] args) {
-        logger.warn("start");
+    public static void main(String[] args) throws InterruptedException {
+        LOGGER.info("Thread_number: {} rate_minutes: {}", APP_CONFIG.getThreadNumber(), APP_CONFIG.getRateMinutes());
 
-        List<String> vocabulary = loadVocabulary();
+        List<String> vocabulary = VocabularyLoader.loadVocabulary();
+        // Configurați ExecutorService cu coada de lucru cu capacitate limitată
+//        int threadCount = APP_CONFIG.getThreadNumber();
+        int threadCount = 2;
 
 
-        List<Thread> threads = new ArrayList<>();
-        for (int i = 0; i < CONFIG.getThreadNumber(); i++) {
-            Thread thread = new Thread(new CustomThread(vocabulary, web3));
-            thread.start();
-            threads.add(thread);
-        }
-        Runtime.getRuntime().addShutdownHook(new Thread(() -> {
-            for (Thread t:threads) {
-                t.interrupt();
+        //RejectedExecutionHandler implementation
+        RejectedExecutionHandlerImpl rejectionHandler = new RejectedExecutionHandlerImpl();
+        //Get the ThreadFactory implementation to use
+        ThreadFactory threadFactory = Executors.defaultThreadFactory();
+        //creating the ThreadPoolExecutor
+        ArrayBlockingQueue<Runnable> workQueue = new ArrayBlockingQueue<>(QUEUE_CAPACITY);
+        ThreadPoolExecutor executorPool = new ThreadPoolExecutor(90,
+                90,
+                2,
+                TimeUnit.SECONDS,
+                workQueue,
+                threadFactory,
+                rejectionHandler);
+
+        //start the monitoring thread
+        MonitorThread monitor = new MonitorThread(executorPool, 10);
+        Thread monitorThread = new Thread(monitor);
+        monitorThread.start();
+
+        while (!Thread.interrupted()) {
+            if (workQueue.size() < QUEUE_CAPACITY){
+                String mnemonic = MnemonicGenerator.generateMnemonic(vocabulary);
+                Runnable worker = new WorkerThread(mnemonic);
+                executorPool.execute(worker);
             }
-        }));
+        }
+        Thread.sleep(30000);
+        //shut down the pool
+        executorPool.shutdown();
+        //shut down the monitor thread
+        Thread.sleep(5000);
+        monitor.shutdown();
+
     }
 
-    private static List<String> loadVocabulary(){
-        List<String> result = new ArrayList<>(VOCABULARY_LIMIT);
-        try (InputStream inputStream = CheckMnemonic.class.getResourceAsStream("/english.txt")) {
-            if (inputStream != null) {
-                try (BufferedReader reader = new BufferedReader(new InputStreamReader(inputStream))) {
-                    String line;
-                    while ((line = reader.readLine()) != null) {
-                        result.add(line);
-                    }
-                }
-            }
-        } catch (IOException e) {
-            logger.error("Error: {0}", e);
-        }
-        return result;
-    }
 }

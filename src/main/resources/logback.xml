@@ -10,14 +10,21 @@
         <encoder>
             <pattern>%d{HH:mm:ss.SSS} [%thread] %-5level %logger{36} - %M - %msg%n</pattern>
         </encoder>
-        <filter class="org.example.MnemonicLogLevel"/>
+        <filter class="ch.qos.logback.classic.filter.LevelFilter">
+            <level>WARN</level>
+            <onMatch>ACCEPT</onMatch>
+            <onMismatch>DENY</onMismatch>
+        </filter>
     </appender>
 
     <logger name="org.web3j.protocol.http.HttpService" level="INFO" additivity="false">
         <appender-ref ref="console"/>
     </logger>
+    <logger name="org.bitcoinj.crypto.MnemonicCode" level="WARN" additivity="false">
+        <appender-ref ref="console"/>
+    </logger>
 
-    <root level="DEBUG">
+    <root level="INFO">
         <appender-ref ref="console"/>
         <appender-ref ref="warnFile"/>
     </root>

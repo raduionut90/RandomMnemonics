@@ -9,16 +9,16 @@ import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.util.Properties;
 
-public class Config {
-    private static final Logger logger = LoggerFactory.getLogger(Config.class);
+public class AppConfig {
+    private static final Logger logger = LoggerFactory.getLogger(AppConfig.class);
     private static final Properties appProps = new Properties();
 
-    private static final Config INSTANCE = new Config();
+    private static final AppConfig INSTANCE = new AppConfig();
 
     private int threadNumber;
     private int rateMinutes;
 
-    private Config(){
+    private AppConfig(){
         try (InputStream inputStream = CheckMnemonic.class.getResourceAsStream("/app.properties")) {
             if (inputStream != null) {
                 try (BufferedReader reader = new BufferedReader(new InputStreamReader(inputStream))) {
@@ -32,7 +32,7 @@ public class Config {
         }
     }
 
-    public static synchronized Config getInstance() {
+    public static synchronized AppConfig getInstance() {
         return INSTANCE;
     }
 
