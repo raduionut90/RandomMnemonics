@@ -19,20 +19,14 @@ public class CheckMnemonic {
     public static void main(String[] args) throws InterruptedException {
         LOGGER.info("Thread_number: {} rate_minutes: {}", APP_CONFIG.getThreadNumber(), APP_CONFIG.getRateMinutes());
 
-        List<String> vocabulary = VocabularyLoader.loadVocabulary();
-        // Configurați ExecutorService cu coada de lucru cu capacitate limitată
-//        int threadCount = APP_CONFIG.getThreadNumber();
-        int threadCount = 2;
-
-
         //RejectedExecutionHandler implementation
         RejectedExecutionHandlerImpl rejectionHandler = new RejectedExecutionHandlerImpl();
         //Get the ThreadFactory implementation to use
         ThreadFactory threadFactory = Executors.defaultThreadFactory();
         //creating the ThreadPoolExecutor
         ArrayBlockingQueue<Runnable> workQueue = new ArrayBlockingQueue<>(QUEUE_CAPACITY);
-        ThreadPoolExecutor executorPool = new ThreadPoolExecutor(2,
-                15,
+        ThreadPoolExecutor executorPool = new ThreadPoolExecutor(1,
+                100,
                 100,
                 TimeUnit.SECONDS,
                 workQueue,
@@ -40,12 +34,12 @@ public class CheckMnemonic {
                 rejectionHandler);
 
         //start the monitoring thread
-        MonitorThread monitor = new MonitorThread(executorPool, 10);
+        MonitorThread monitor = new MonitorThread(executorPool, 3);
         Thread monitorThread = new Thread(monitor);
         monitorThread.start();
 
         while (!Thread.interrupted()) {
-            Runnable worker = new WorkerThread(vocabulary);
+            Runnable worker = new WorkerThread();
             executorPool.execute(worker);
         }
         Thread.sleep(30000);

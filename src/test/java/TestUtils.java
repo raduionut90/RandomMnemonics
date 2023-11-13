@@ -1,10 +1,11 @@
 import org.example.AppConfig;
+import org.example.MnemonicGenerator;
 import org.example.MnemonicProcessor;
 import org.junit.Assert;
 import org.junit.Test;
+import org.web3j.crypto.MnemonicUtils;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertNotEquals;
+import static org.junit.Assert.*;
 
 public class TestUtils {
 
@@ -23,6 +24,31 @@ public class TestUtils {
         assertEquals(expectedAddress1.toLowerCase(), actualAddress1.toLowerCase());
         assert actualAddress2 != null;
         assertEquals(expectedAddress2.toLowerCase(), actualAddress2.toLowerCase());
+    }
+
+    @Test
+    public void testIsValidMnemonic() {
+        for (int i = 0; i < 10000; i++) {
+            String mnemonic = MnemonicGenerator.generateMnemonic();
+            boolean mnemonicUtilsIsValid = MnemonicUtils.validateMnemonic(mnemonic);
+            boolean mnemonicGeneratorIsValid = MnemonicGenerator.isValidMnemonic(mnemonic);
+            assertEquals(mnemonicUtilsIsValid, mnemonicGeneratorIsValid);
+        }
+    }
+
+    @Test
+    public void testGetBalance() {
+        String mnemonic = "priority apology asthma comic athlete ring setup bacon congress sibling sting swallow";
+        String expectedAddress = "0x1999dd3f93e746f1fea406574f653806a4aa4341";
+        String actualAddress = MnemonicProcessor.getAddressFromMnemonic(mnemonic);
+        String actualBalance = MnemonicProcessor.getBalance(actualAddress);
+
+        assert actualAddress != null;
+        MnemonicProcessor.checkBalance(actualAddress, mnemonic);
+        assertFalse(MnemonicUtils.validateMnemonic(mnemonic));
+        assertFalse(MnemonicGenerator.isValidMnemonic(mnemonic));
+        assertEquals(expectedAddress.toLowerCase(), actualAddress.toLowerCase());
+        Assert.assertNotEquals(actualBalance.compareTo("BigInteger.ZERO"), 0);
     }
 
     @Test
