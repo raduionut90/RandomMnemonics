@@ -5,7 +5,6 @@ import org.example.worker.RejectedExecutionHandlerImpl;
 import org.example.worker.WorkerThread;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.web3j.crypto.MnemonicUtils;
 
 import java.util.List;
 import java.util.concurrent.*;
@@ -14,9 +13,9 @@ import java.util.concurrent.*;
 public class CheckMnemonic {
     private static final Logger LOGGER = LoggerFactory.getLogger(CheckMnemonic.class);
     private static final AppConfig APP_CONFIG = AppConfig.getInstance();
-    private static final int QUEUE_CAPACITY = 1000; // Alegeți o capacitate adecvată
+    private static final int QUEUE_CAPACITY = 10000; // Alegeți o capacitate adecvată
 
-    public static void main(String[] args) throws InterruptedException {
+    public static void main(String[] args) throws InterruptedException, ExecutionException {
         LOGGER.info("Thread_number: {} rate_minutes: {}", APP_CONFIG.getThreadNumber(), APP_CONFIG.getRateMinutes());
 
         //RejectedExecutionHandler implementation
@@ -25,9 +24,9 @@ public class CheckMnemonic {
         ThreadFactory threadFactory = Executors.defaultThreadFactory();
         //creating the ThreadPoolExecutor
         ArrayBlockingQueue<Runnable> workQueue = new ArrayBlockingQueue<>(QUEUE_CAPACITY);
-        ThreadPoolExecutor executorPool = new ThreadPoolExecutor(1,
+        ThreadPoolExecutor executorPool = new ThreadPoolExecutor(10,
                 100,
-                100,
+                10,
                 TimeUnit.SECONDS,
                 workQueue,
                 threadFactory,
@@ -39,8 +38,12 @@ public class CheckMnemonic {
         monitorThread.start();
 
         while (!Thread.interrupted()) {
-            Runnable worker = new WorkerThread();
+            List<String> mnemonic = MnemonicGenerator.generateMnemonic();
+            String mnemonicString = String.join(" ", mnemonic);
+            WorkerThread worker = new WorkerThread(mnemonicString);
             executorPool.execute(worker);
+//            String address = future.get();
+//            MnemonicProcessor.checkBalance(address, mnemonicString);
         }
         Thread.sleep(30000);
         //shut down the pool

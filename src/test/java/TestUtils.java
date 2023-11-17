@@ -5,6 +5,9 @@ import org.junit.Assert;
 import org.junit.Test;
 import org.web3j.crypto.MnemonicUtils;
 
+import java.util.Arrays;
+import java.util.List;
+
 import static org.junit.Assert.*;
 
 public class TestUtils {
@@ -29,10 +32,9 @@ public class TestUtils {
     @Test
     public void testIsValidMnemonic() {
         for (int i = 0; i < 10000; i++) {
-            String mnemonic = MnemonicGenerator.generateMnemonic();
-            boolean mnemonicUtilsIsValid = MnemonicUtils.validateMnemonic(mnemonic);
-            boolean mnemonicGeneratorIsValid = MnemonicGenerator.isValidMnemonic(mnemonic);
-            assertEquals(mnemonicUtilsIsValid, mnemonicGeneratorIsValid);
+            List<String> mnemonic = MnemonicGenerator.generateMnemonic();
+            boolean mnemonicUtilsIsValid = MnemonicUtils.validateMnemonic(String.join(" ", mnemonic));
+            assertTrue(mnemonicUtilsIsValid);
         }
     }
 
@@ -43,10 +45,8 @@ public class TestUtils {
         String actualAddress = MnemonicProcessor.getAddressFromMnemonic(mnemonic);
         String actualBalance = MnemonicProcessor.getBalance(actualAddress);
 
-        assert actualAddress != null;
         MnemonicProcessor.checkBalance(actualAddress, mnemonic);
         assertFalse(MnemonicUtils.validateMnemonic(mnemonic));
-        assertFalse(MnemonicGenerator.isValidMnemonic(mnemonic));
         assertEquals(expectedAddress.toLowerCase(), actualAddress.toLowerCase());
         Assert.assertNotEquals(actualBalance.compareTo("BigInteger.ZERO"), 0);
     }

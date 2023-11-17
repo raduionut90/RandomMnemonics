@@ -10,30 +10,35 @@ public class MnemonicGenerator {
 
     private static final List<String> vocabulary = VocabularyLoader.loadVocabulary();
 
-    public static String generateMnemonic() {
-        List<String> mnemonicList = new ArrayList<>(MNEMONIC_SIZE);
+    public static List<String> generateMnemonic() {
+        TreeMap<String, Integer> mnemonicList = new TreeMap<>();
 
+        processMnemonicList(mnemonicList);
+        while (!isValidMnemonic(mnemonicList)) {
+            mnemonicList.pollFirstEntry();
+            processMnemonicList(mnemonicList);
+        }
+
+        return mnemonicList.keySet().stream().toList();
+    }
+
+    private static void processMnemonicList(Map<String, Integer> mnemonicList) {
         while (mnemonicList.size() < MNEMONIC_SIZE) {
             int randomInt = RANDOM.nextInt(vocabulary.size());
             String randomWord = vocabulary.get(randomInt);
-            if (!mnemonicList.contains(randomWord)) {
-                mnemonicList.add(randomWord);
+            if (!mnemonicList.containsKey(randomWord)) {
+                mnemonicList.put(randomWord, randomInt);
             }
         }
-
-
-        String mnemonic = String.join(" ", mnemonicList);
-        return isValidMnemonic(mnemonic) ? mnemonic : generateMnemonic();
     }
 
-    public static boolean isValidMnemonic(String mnemonic) {
+    public static boolean isValidMnemonic(Map<String, Integer> mnemonic) {
         final BitSet bits = new BitSet();
-        final int size = mnemonicToBits(mnemonic, bits);
+        mnemonicToBits(mnemonic, bits);
         final byte[] entropy = new byte[128 / 8];
         for (int i = 0; i < entropy.length; i++) {
             entropy[i] = readByte(bits, i);
         }
-//        validateEntropy(entropy);
 
         final byte expectedChecksum = calculateChecksum(entropy);
         final byte actualChecksum = readByte(bits, entropy.length);
@@ -44,21 +49,15 @@ public class MnemonicGenerator {
         return true;
     }
 
-    private static int mnemonicToBits(String mnemonic, BitSet bits) {
+    private static void mnemonicToBits(Map<String, Integer> mnemonic, BitSet bits) {
         int bit = 0;
-        final StringTokenizer tokenizer = new StringTokenizer(mnemonic, " ");
-        while (tokenizer.hasMoreTokens()) {
-            final String word = tokenizer.nextToken();
-            final int index = vocabulary.indexOf(word);
-            if (index < 0) {
-                throw new IllegalArgumentException(
-                        String.format("Mnemonic word '%s' should be in the word list", word));
-            }
+
+        for (Map.Entry<String, Integer> word : mnemonic.entrySet()) {
+            final int index = word.getValue();
             for (int k = 0; k < 11; k++) {
                 bits.set(bit++, isBitSet(index, 10 - k));
             }
         }
-        return bit;
     }
 
     private static boolean isBitSet(int n, int k) {
