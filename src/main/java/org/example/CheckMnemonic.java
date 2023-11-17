@@ -15,7 +15,7 @@ public class CheckMnemonic {
     private static final AppConfig APP_CONFIG = AppConfig.getInstance();
     private static final int QUEUE_CAPACITY = 10000; // Alegeți o capacitate adecvată
 
-    public static void main(String[] args) throws InterruptedException, ExecutionException {
+    public static void main(String[] args) throws InterruptedException {
         LOGGER.info("Thread_number: {} rate_minutes: {}", APP_CONFIG.getThreadNumber(), APP_CONFIG.getRateMinutes());
 
         //RejectedExecutionHandler implementation

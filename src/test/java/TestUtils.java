@@ -6,7 +6,6 @@ import org.junit.Test;
 import org.web3j.crypto.MnemonicUtils;
 
 import java.math.BigInteger;
-import java.util.Arrays;
 import java.util.List;
 
 import static org.junit.Assert.*;

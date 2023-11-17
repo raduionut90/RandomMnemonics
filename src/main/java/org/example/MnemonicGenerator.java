@@ -42,11 +42,7 @@ public class MnemonicGenerator {
 
         final byte expectedChecksum = calculateChecksum(entropy);
         final byte actualChecksum = readByte(bits, entropy.length);
-        if (expectedChecksum != actualChecksum) {
-            return false;
-        }
-
-        return true;
+        return expectedChecksum == actualChecksum;
     }
 
     private static void mnemonicToBits(Map<String, Integer> mnemonic, BitSet bits) {

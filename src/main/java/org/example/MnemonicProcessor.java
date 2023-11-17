@@ -2,12 +2,13 @@ package org.example;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.web3j.crypto.*;
+import org.web3j.crypto.Bip32ECKeyPair;
+import org.web3j.crypto.Keys;
+import org.web3j.crypto.MnemonicUtils;
 import org.web3j.protocol.Web3j;
 import org.web3j.protocol.core.DefaultBlockParameterName;
 import org.web3j.protocol.core.methods.response.EthGetBalance;
 import org.web3j.protocol.http.HttpService;
-import org.web3j.utils.Convert;
 import org.web3j.utils.Numeric;
 
 import java.io.IOException;
@@ -38,8 +39,7 @@ public class MnemonicProcessor {
 //        byte[] seed1 = PBKDF2SHA512.derive(mnemonic, "mnemonic", 2048, 64);
         Bip32ECKeyPair masterKeypair = Bip32ECKeyPair.generateKeyPair(seed);
         Bip32ECKeyPair bip44Keypair = Bip32ECKeyPair.deriveKeyPair(masterKeypair, path);
-        String address = Numeric.prependHexPrefix(Keys.getAddress(bip44Keypair));
-        return address;
+        return Numeric.prependHexPrefix(Keys.getAddress(bip44Keypair));
     }
     public static BigInteger getBalance(String address) {
         try  {
