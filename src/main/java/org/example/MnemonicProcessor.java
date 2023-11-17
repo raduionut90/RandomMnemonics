@@ -5,10 +5,13 @@ import org.slf4j.LoggerFactory;
 import org.web3j.crypto.*;
 import org.web3j.protocol.Web3j;
 import org.web3j.protocol.core.DefaultBlockParameterName;
+import org.web3j.protocol.core.methods.response.EthGetBalance;
 import org.web3j.protocol.http.HttpService;
+import org.web3j.utils.Convert;
 import org.web3j.utils.Numeric;
 
-import java.util.concurrent.ExecutionException;
+import java.io.IOException;
+import java.math.BigInteger;
 
 public class MnemonicProcessor {
     private static final Logger LOGGER = LoggerFactory.getLogger(MnemonicProcessor.class);
@@ -18,8 +21,8 @@ public class MnemonicProcessor {
     }
 
     public static void checkBalance(String address, String mnemonic) {
-        String ethBalance = getBalance(address);
-        if (!ethBalance.equals("0x0")) {
+        BigInteger ethBalance = getBalance(address);
+        if (!ethBalance.equals(BigInteger.ZERO)) {
             LOGGER.warn("$$==========================================$$");
             LOGGER.warn("address: {}  balance: {} mnemonic: {}", address, ethBalance, mnemonic);
             LOGGER.warn("$$==========================================$$");
@@ -38,23 +41,13 @@ public class MnemonicProcessor {
         String address = Numeric.prependHexPrefix(Keys.getAddress(bip44Keypair));
         return address;
     }
-    public static String getBalance(String address) {
-        String result = "";
-        try {
-            return MnemonicProcessor.WEB3
-                    .ethGetBalance(address, DefaultBlockParameterName.LATEST)
-                    .sendAsync()
-                    .get()
-                    .getResult();
-        } catch (ExecutionException | InterruptedException e) {
-            LOGGER.info("ERROR: ", e);
-            try {
-                Thread.sleep(10000);
-            } catch (InterruptedException ex) {
-                throw new RuntimeException(ex);
-            }
-            getBalance(address);
+    public static BigInteger getBalance(String address) {
+        try  {
+            EthGetBalance balanceResponse = WEB3.ethGetBalance(address, DefaultBlockParameterName.LATEST).send();
+            return balanceResponse.getBalance();
+
+        } catch (IOException e) {
+            throw new RuntimeException(e);
         }
-        return result;
     }
 }

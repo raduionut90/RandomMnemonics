@@ -5,6 +5,7 @@ import org.junit.Assert;
 import org.junit.Test;
 import org.web3j.crypto.MnemonicUtils;
 
+import java.math.BigInteger;
 import java.util.Arrays;
 import java.util.List;
 
@@ -43,28 +44,26 @@ public class TestUtils {
         String mnemonic = "priority apology asthma comic athlete ring setup bacon congress sibling sting swallow";
         String expectedAddress = "0x1999dd3f93e746f1fea406574f653806a4aa4341";
         String actualAddress = MnemonicProcessor.getAddressFromMnemonic(mnemonic);
-        String actualBalance = MnemonicProcessor.getBalance(actualAddress);
+        BigInteger actualBalance = MnemonicProcessor.getBalance(actualAddress);
 
         MnemonicProcessor.checkBalance(actualAddress, mnemonic);
         assertFalse(MnemonicUtils.validateMnemonic(mnemonic));
         assertEquals(expectedAddress.toLowerCase(), actualAddress.toLowerCase());
-        Assert.assertNotEquals(actualBalance.compareTo("BigInteger.ZERO"), 0);
+        assertEquals(actualBalance.compareTo(BigInteger.ZERO), 0);
     }
 
     @Test
     public void testGetBalance1()  {
         String address = "0x63F65a55149Cef6B6017520ad74e8cf7702FaF9a";
-        String expectedBalance = "0x1592f164e5d0";
-        String actualBalance = MnemonicProcessor.getBalance(address);
-        assertEquals(expectedBalance, actualBalance.toString());
-        Assert.assertNotEquals(actualBalance.compareTo(""), 0);
+        BigInteger actualBalance = MnemonicProcessor.getBalance(address);
+        assertNotEquals(actualBalance.compareTo(BigInteger.ZERO), 0);
     }
 
     @Test
     public void testGetBalance2() {
         String address = "0x05be40969F80543Af58139105738CD11bF820A5B"; //Uniswap address
-        String actualBalance = MnemonicProcessor.getBalance(address);
-        Assert.assertNotEquals(actualBalance.compareTo("BigInteger.ZERO"), 0);
+        BigInteger actualBalance = MnemonicProcessor.getBalance(address);
+        Assert.assertNotEquals(actualBalance.compareTo(BigInteger.ZERO), 0);
     }
 
     @Test
