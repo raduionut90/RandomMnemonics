@@ -25,7 +25,7 @@ public class CheckMnemonic {
         //creating the ThreadPoolExecutor
         ArrayBlockingQueue<Runnable> workQueue = new ArrayBlockingQueue<>(QUEUE_CAPACITY);
         ThreadPoolExecutor executorPool = new ThreadPoolExecutor(10,
-                100,
+                24,
                 10,
                 TimeUnit.SECONDS,
                 workQueue,
@@ -33,7 +33,7 @@ public class CheckMnemonic {
                 rejectionHandler);
 
         //start the monitoring thread
-        MonitorThread monitor = new MonitorThread(executorPool, 3);
+        MonitorThread monitor = new MonitorThread(executorPool, 60);
         Thread monitorThread = new Thread(monitor);
         monitorThread.start();
 

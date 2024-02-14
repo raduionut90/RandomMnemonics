@@ -1,10 +1,10 @@
 package org.example;
 
+import org.example.utils.MnemonicUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.web3j.crypto.Bip32ECKeyPair;
 import org.web3j.crypto.Keys;
-import org.web3j.crypto.MnemonicUtils;
 import org.web3j.protocol.Web3j;
 import org.web3j.protocol.core.DefaultBlockParameterName;
 import org.web3j.protocol.core.methods.response.EthGetBalance;
@@ -13,7 +13,6 @@ import org.web3j.utils.Numeric;
 
 import java.io.IOException;
 import java.math.BigInteger;
-
 public class MnemonicProcessor {
     private static final Logger LOGGER = LoggerFactory.getLogger(MnemonicProcessor.class);
     private static final Web3j WEB3 = Web3j.build(new HttpService());
@@ -50,4 +49,5 @@ public class MnemonicProcessor {
             throw new RuntimeException(e);
         }
     }
+
 }
